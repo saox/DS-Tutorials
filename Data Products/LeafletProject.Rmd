@@ -1,0 +1,40 @@
+---
+title: "LeafletExample"
+author: "Konrad Ilczuk"
+date: "26-02-2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(leaflet)
+```
+
+
+## Visualizing Alien Atrocities
+
+This document serves as an example of a markdown document with a Leflet map embedded into it. The map visualizes casualties caused by alien activity and the area in which the events took place.
+
+```{r echo=FALSE, align='CENTER'}
+n<-10
+lng <- rnorm(n,5,5)
+lat <- rnorm(n,10,5)
+names <- stringi::stri_rand_strings(n, 5)
+victims <- round(runif(n = n,min = 1,max = 166))
+victims_str<- as.character(victims)
+victims_str <- paste0("Number of victims: ",victims_str)
+geodata <- data.frame(lng=lng,lat=lat,popup=names,victims=victims_str,victims_num=victims)
+
+convex <- geodata[chull(geodata$lng,geodata$lat),]
+
+map <- leaflet() %>% 
+  addTiles %>% 
+  addMarkers(data=geodata,lng=~lng,lat=~lat,popup = ~popup,label=~victims,group="Location") %>%
+addPolygons(data = convex, lng = ~lng, lat = ~lat, fill = T, weight = 2, color = "red",fillColor="red",fillOpacity=0.1,group="Area") %>%
+addCircles(data = geodata,lng = ~lng,lat=~lat, radius = geodata$victims_num*1500,stroke = F,fillColor = "blue",group="Casualties") %>%
+addLayersControl(
+    overlayGroups = c("Casualties", "Area","Location"),
+    options = layersControlOptions(collapsed = FALSE)
+  )
+map
+```
