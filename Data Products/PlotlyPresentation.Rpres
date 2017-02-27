@@ -1,0 +1,32 @@
+PlotlyPresentation
+========================================================
+author: Konrad Ilczuk
+date: 27-02-2016
+autosize: true
+
+What is coming up next?
+========================================================
+
+A time series of stock market prices from:
+
+- CAC
+- DAX
+- FTSE
+- SMI
+
+Slide With Interactive Plot
+========================================================
+
+```{r echo=FALSE}
+library(plotly)
+library(tidyr)
+library(dplyr)
+data("EuStockMarkets")
+
+stocks <- as.data.frame(EuStockMarkets) %>% gather(index,price) %>% mutate(time=rep(time(EuStockMarkets),4))
+
+p<-plot_ly(stocks,x=stocks$time,y=stocks$price,color=stocks$index)
+htmlwidgets::saveWidget(as.widget(p), file = "demo.html")
+```
+<iframe src="demo.html" style="position:absolute;height:100%;width:100%"></iframe>
+
